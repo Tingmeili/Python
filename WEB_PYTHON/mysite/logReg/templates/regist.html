@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	{% load staticfiles %}
+</head>
+<body>
+{% if Method == 'GET' %}
+    <form method ="post">
+        
+        {{uf.as_p}}
+        <input type="submit" name="regist" value="regist">
+    </form>
+{% else %}
+    {% if username %}
+        {{username}} regist is success!
+        <br>
+        <a href="http://127.0.0.1:8080/login">login</a>
+    {% else %}
+        {{ registJudge }}  is exist!
+        <br>
+        <a href="http://127.0.0.1:8080/regist">regist</a>
+    {% endif %}
+{% endif %}
+
+</body>
+</html>

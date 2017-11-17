@@ -1,0 +1,699 @@
+
+参考网页：http://www.cnblogs.com/vamei/archive/2012/09/13/2682778.html
+
+
+
+
+input()函数会假设用户输入的是合法的python表达式。所以直接输入huhu 系统会提示错误，但是如果加上引号（“huhu”）就会是一个合法的字符，程序运行是没有问题的。
+
+如果需要写一个非常非常长的字符串，它需要跨多行，那么，可以使用三个引号带点普通引号:
+  >>> print ''' this is a very long string.
+It continues here.
+and it's not over yet.
+'''
+
+ this is a very long string.
+It continues here.
+and it's not over yet.
+
+
+普通字符串也可以跨行。如果一行之中最后一个字符是反斜线，那么，换行符本身就“转义”了，也就是被忽略了。
+>>> print " Hello.\
+world!"
+ Hello.world!
+>>> 1+2+\
+      4+5
+12
+
+
+
+原始字符串
+
+ >>> path ='C:\abc'
+ >>> print path
+    C:bc
+
+  怎么会这样呢，我想输入的是一个路径，却被换行了。
+
+  >>> print 'C:\\abc'
+    C:\abc
+  >>> print 'C:\\Program Files\\fnord\\foo\\bar\\baz\\frozz'
+    C:\Program Files\fnord\foo\bar\baz\frozz
+
+   通过上面的双斜线（\\）解决了路径问题，但如果路径很长的话会不会太麻烦了。
+
+   >>> print r'C:\Program Files\fnord\foo\bar\baz\frozz'
+    C:\Program Files\fnord\foo\bar\baz\frozz
+
+    >>> print r'Let\'s go !'
+     Let\'s go !
+
+    原始字符串不会把反斜线当作特殊字符。可以看到，原始字符串以r开头。
+
+
+
+Python中的普通字符串在内部是以8位ASCII码形成存储的
+ 而Unicode字符串则存储为16位Unicode字符，这样就能够表示更多的字符集了，包括世界上大多数语言的特殊字符。
+  >>> u'hello, world!'
+      u'hello, world!' 
+
+    可以看到，Unicode字符串使用u前缀，就像原始字符串使用r 一样。
+
+    注意：在python 3.0中，所有字符串都是Unicode字符串。
+
+
+
+
+
+Python包含6中内建的序列，即列表、元组、字符串、Unicode字符串、buffer对象和xrange对象。。
+
+   分片：
+     >> numbers = [0,1,2,3,4,5,6,7,8,9]
+     >>> numbers[0:10:1]   #求0到10之间的数，步长为1
+         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+     >>> numbers[0:10:2]   #步长为2
+         [0, 2, 4, 6, 8]
+     >>> numbers[0:10:3]   #步长为3
+         [0, 3, 6, 9]
+
+
+   简单来说，两种相同类型的序列才能进行连接操作。
+
+
+
+   >>> 'python ' * 5
+      'python python python python python '
+   >>> [25] * 10
+      [25, 25, 25, 25, 25, 25, 25, 25, 25, 25]
+
+
+
+
+  如果想创建一个占用十个元素空间，却不包括任何有用的内容的列表，可以用none
+
+   sequence
+   [None, None, None, None, None, None, None, None, None, None]
+
+
+
+   
+
+  List函数可以将一个字符串拆分成列表：
+
+    >>> list('chongshi')
+        ['c', 'h', 'o', 'n', 'g', 's', 'h', 'i']
+
+  从列表中删除元素也很容易，使用dele语句来实现。
+   
+     >>> names = ['zhangsan','lisi','wangwu','sunliu']
+     >>> del names[2]
+     >>> names
+         ['zhangsan', 'lisi', 'sunliu']
+
+
+
+  列表方法：append ,count(计算一个元素在列表中出现的次数)，extend（在列表的末尾一次性追加另一个序列中的多个值。用新列表扩展原有列表），index 方法用于从列表中找出某个值第一个匹配项的，insert 方法用于将对象插入到列表中，pop 方法会移除列表中一个元素（默认是最后一个），并且返回该元素的值，remove 方法用于移除列表中某个值的第一个匹配项，sort方法用于在原位置对列表进行排序。在“原位置排序”改变原来的列表，从而让其中的元素能按一定的顺序排列。
+
+
+         >>> a = [1,2,3]
+         >>> b = [4,5,6]
+         >>> a.extend(b)
+         >>> a
+         [1, 2, 3, 4, 5, 6]
+
+
+  
+
+  元组：
+    >>> tuple([1,2,3])
+        (1, 2, 3)
+    >>> tuple('abc')
+        ('a', 'b', 'c')
+    >>> tuple((1,2,3))
+        (1, 2, 3)
+
+
+  字符串方法：
+     find 方法可以在一个较长的字符串中查找子字符串。它返回子串所在位置的最左端索引。如果没有找到则返回-1.
+
+    >>> dirs = '','usr','bin','env'
+    >>> '/'.join(dirs)
+    '/usr/bin/env'
+  
+   join与split的相反
+   replace 方法返回某字符串的所有匹配项均被替换之后得到字符串。
+   strip 方法返回去除两侧（不包含内部）空格的字符串
+
+
+  
+  字典：
+    >>> items = [('name','gumby'),('age',42)]
+    >>> d = dict(items)
+    >>> d
+      {'age': 42, 'name': 'gumby'}
+    >>> d['name']
+      'gumby'
+
+
+
+    >>> d = dict(name ='gumby', age=42)
+    >>> d
+      {'age': 42, 'name': 'gumby'}
+
+
+
+
+
+
+基本语句的更多用法：
+
+
+  链式赋值：链式赋值是将同一个值赋给多个变量的捷径。
+    >>> x = y = 42
+    
+   >>> test={'h':1,'r':2}
+   >>> key,value=test.popitem()
+   >>> key
+       h
+   >>> value
+        1
+   >>> print test
+      {'r': 2}
+
+
+
+
+断言：
+   如果需要确保程序中的某个条件一定为真才能让程序正常工作的话，assert 语句可以在程序中设置检查点。
+
+   >>> age = 10
+   >>> assert 0 < age < 100
+   >>> age = -1
+   >>> assert 0 < age < 100 , 'the age must be realistic'
+
+   Traceback (most recent call last):
+     File "<pyshell#8>", line 1, in <module>
+      assert 0 < age < 100 , 'the age must be realistic'
+    AssertionError: the age must be realistic
+
+
+
+循环：break语句
+
+      break 用来结束循环
+
+
+
+     continue 语句
+
+     continue结束当前的迭代，“跳”到下一轮循环执行。
+
+
+
+  
+
+函数：
+    
+    
+    局部变量
+
+　　当函数定义生命变量的时候，函数内所生命的变理只在其函数内有效，与函数外具有相同名称的其他变量没有任何关系
+ 
+    global 语句
+
+　　如果想把一个变量声名为 全局的，则可以使用global语句。
+     
+
+
+    注意：只有在形参表末尾的那些参数可以有默认参数，如def func(a=5,b) 是无效的，def func(a,b=5)是有效的
+    
+    关键参数
+
+　　如果某个函数有许多参数，而我们只想指定其中的一部分，那么可以使用名字（关键字）而不是位置来给函数指定实参。----这被称作 关键参数
+    def func(a,b=5,c=10):
+    print 'a is',a, 'and b is',b,'and c is',c
+
+    func(3,7)
+    func(24,c=32)
+    func(c=23,a=14)
+
+    #输出
+    >>> 
+    a is 3 and b is 7 and c is 10
+    a is 24 and b is 5 and c is 32
+    a is 14 and b is 5 and c is 23
+
+
+    
+
+递归：
+
+　　有用的递归函数... 等等，什么是无用的递归？先来看一个函数的定义：
+
+    def recursion()
+        return recursion()
+
+ 
+
+    显然，它什么也干不了，程序的执行不断申请内存，直接内存耗尽，程序崩溃。
+
+    接着，有用的递归函数包含以下几个部分：
+
+       当函数直接返回值时有基本实例（最小可能性问题）
+       递归实例，包括一个或者多个问题最小部分的递归调用。
+
+ 
+
+   下面通过递归函数来计算一个n的阶，n*(n-1)*(n-2)*....*1
+
+   def f(n):
+     if n == 1:
+       return 1
+     else:
+        return n*f(n-1)
+
+
+
+
+多态
+
+     面向对象程序设计最有趣的特性是多太，它是是让大多数人犯晕的特性。所以，先来介绍这个。
+
+     多态意思是“有多种形式”。多态意味着就算不知道变量所引用的对象类是什么，还是能对它进行操作，而它也会根据对象（或类）类型的不同而表现出不同的行为。
+     >>> def add(x,y):
+          return x+y
+
+
+封装:
+   
+
+
+
+继承:
+    
+   在python中继承中的一些特点：
+
+1：在继承中基类的构造（__init__()方法）不会被自动调用，它需要在其派生类的构造中亲自专门调用。有别于C#
+
+2：在调用基类的方法时，需要加上基类的类名前缀，且需要带上self参数变量。区别于在类中调用普通函数时并不需要带上self参数
+
+3：Python总是首先查找对应类型的方法，如果它不能在派生类中找到对应的方法，它才开始到基类中逐个查找。（先在本类中查找调用的方法，找不到才去基类中找）。
+
+
+特性、函数和方法:
+    self 参数事实上正是方法和函数的区别。方法将它们的第一个参数绑定到所属的实例上，因此这个参数可以不必提供。所以可以将特性绑定到一个普通函数上，这样就不会有特殊的self参数了：
+
+
+指定超类:
+
+
+
+
+
+
+python中的实例方法,类方法，静态方法，普通函数之间的调用：
+    
+       class Test(object):
+            def instance(self):      实例方法
+                print 'instance'
+            @classmethod
+            def calssfunc():         类方法
+                pritn 'hello'
+
+            @staticmethod
+            def staticfunc():        静态方法    
+                print 'yyy'
+
+            def func():              普通函数
+                print 'function'
+ 
+  
+       如果只看这个图,很多人可能会看的一头雾水,特别是学过完全面向对象语言的同学, Python 是双面向的,既可以面向函数编程,也可以面向对象编程,所谓面向函数就是单独一个. py 文件,里面没有类,全是一些函数,调用的时候导入模块,  通过模块名.函数名()即可调用,完全不需要类,那么你可能会问,那要类还有什么毛用? 类就是用来面向对象编程啦,类可以有自己的属性,类可以创建很多实例,每个实例可以有不同的属性,这也就保存了很多私有的数据,总之都有存在的必要.
+
+      在类里面定义的函数就是方法,类方法需要@ classmethod 修饰并且有个隐藏参数 cls,实例方法必须有个参数 self, 静态方法必须有 @staticmethod修饰,
+         类和实例都可以访问静态方法,
+         实例可以访问实例方法也可以访问类方法,
+         类可以访问类方法也可以访问实例方法,访问实例方法必须要带参数 self, 可以理解为类其实也是一个实例,类访问实例方法不带参数会报错的，例：Test.instance(Test)
+         类本身可以访问函数,实例却不行.
+
+
+
+
+构造方法和重写：
+   
+     例：
+      class Bird:
+          def __init__(self):
+             self.hungry = True
+          def eat(self):
+             if self.hungry:
+                print 'Aaaah...'
+                self.hungry = False
+             else:
+                print 'No, thanks!'
+            
+
+      class SongBird(Bird):
+         def __init__(self):
+                 self.sound = 'Squawk!'
+         def sing(self):
+                 print self.sound
+
+    >>> s = SongBird()
+    >>> s.sing()
+        Squawk!
+    >>> s.eat()
+
+     Traceback (most recent call last):
+     File "<pyshell#26>", line 1, in <module>
+      s.eat()
+      File "C:/Python27/bird", line 6, in eat
+      if self.hungry:
+
+     异常很清楚地说明了错误：SongBird没有hungry特性。原因是这样的：在SongBird中，构造方法被重写，但新的构造方法没有任何关于初始化hungry特性的代码。为了达到预期的效果，SongBird的构造方法必须调用其超类Bird的构造 方法来确保进行基本的初始化。
+
+
+     解决方法一：
+   
+           在SongBird类中添加了一行代码Bird.__init__(self)
+           class SongBird(Bird):
+               def __init__(self):
+                  Bird.__init__(self)
+                  self.sound = 'Squawk!'
+               def sing(self):
+                  print self.sound
+
+           在调用一个实例的方法时，该方法的self参数会被自动绑定到实例上（这称为绑定方法）。
+           如果直接调用类的方法，那么就没有实例会被绑定。这样就可以自由地提供需要的self参数（这样的方法称为未绑定方法）。
+           通过将当前的实例作为self参数提供给未绑定方法，SongBird就能够使用其超类构造方法的所有实现，也就是说属性hungry能被设置。
+           
+
+
+   解决方法二：
+        使用super函数
+
+         __metaclass__ = type  #表明为新式类  在类的定义的前面加上这个，表示新式类，
+ 
+         class SongBird(Bird):
+              def __init__(self):
+                 super(SongBird,self).__init__()  当前类和对象可以作为super函数的参数使用，调用函数返回的对象的任何的方法都是调用的超类的方法，而不是当前类的方法
+                 self.sound = 'Squawk!'
+              def sing(self):
+                 print self.sound
+
+
+
+
+
+
+访问器是一个简单的方法，它能够使用getHeight 、setHeight 之样的名字来得到或者重绑定一些特性。如果在访问给定的特性时必须要采取一些行动，那么像这样的封装状态变量就很重要
+
+    例：
+       class rectangle():
+            def __init__(self):
+                self.width=0
+                self.height=0
+            def setsize(self,size):
+                self.width,self.height=size
+            def getsize(self):
+                return self.width,self.height
+     >>> r = Rectangle()
+     >>> r.width = 10
+     >>> r.height = 5
+     >>> r.getSize()
+         (10, 5)
+     >>> r.setSize((150,100))
+     >>> r.width
+         15
+
+     
+
+
+
+property 函数:
+
+  >>> class rectangle():
+  ...   def __int__(self):
+  ...     self.width=0
+  ...     self.height=0
+  ...   def setsize(self,size):
+  ...     self.width,self.height=size
+  ...   def getsize(self):
+  ...     return self.width,self.height
+  ...   size=property(getsize,setsize)
+  ... 
+  >>> r=rectangle()
+  >>> r.width=10
+  >>> r.height=5
+  >>> r.size
+     (10, 5)
+  >>> r.size=100,140
+  >>> r.size
+     (100, 140)
+
+
+
+
+迭代器:
+
+     迭代器是访问集合元素的一种方式。迭代器对象从集合的第一个元素开始访问，直到所有的元素被访问完结束。迭代器只能往前不会后退。
+
+     
+
+     可迭代对象:
+
+　　    迭代器提供了一个统一的访问集合的接口。只要是实现了__iter__()或__getitem__()方法的对象，就可以使用迭代器进行访问。
+
+　　    序列：字符串、列表、元组
+
+　　    非序列：字典、文件
+
+　　    自定义类：用户自定义的类实现了__iter__()或__getitem__()方法的对象
+
+
+
+
+    使用对象内置的__iter__()方法生成迭代器:
+         
+       >>> ll=[1,3,44,4]
+       >>> l1=ll.__iter__()
+       >>> print l1
+           <listiterator object at 0x7f8fb9b64b90>
+       >>> l1.next()
+           1
+       >>> l1.next()
+           3
+    使用内置工厂函数生成迭代器:
+        lst = [1, 2, 3, 4, 5]  
+        lst = iter(lst)  
+        try:  
+           while True:  
+              print lst.next()  
+        except StopIteration:  
+           pass
+
+    实际上,在for循环中,Python将自动调用iter()获得迭代器,然后自动调用next()获取元素,而且还检查是否抛出StopIteration异常.
+    1.3自定义迭代器:
+       其实在Python中没有迭代器这个类,具有以下两个特性的类都可以成为迭代器类:
+          1.具有next方法,返回容器的下一个元素或者抛出StopIteration异常;
+          2.有__iter__方法,返回迭代器本身.
+          那么动手自己写一个迭代器类,实现求斐波那契数列:
+
+             class Fib(object):
+                def __init__(self,num):
+                    self.num=num
+                    self.n=0
+                    self.a=0
+                    self.b=1
+                def next(self) :
+                    if self.n<self.num:
+                        result=self.b
+                        return self.a,self.b=self.b,self.a+self+b
+                        return self.b
+                        self.n+=1
+                    else：
+                        raise StopIteration
+
+
+                
+                    
+                def __iter__(self):
+                    return self
+
+
+
+
+     >>> def test():
+...   lst=[1,2,3,4,5,6,7,8,9]
+...   l1=[x for x in lst if x %2==0]
+...   l2=(x for x in lst if x %2==1)
+...   print l1
+...   print l2
+... 
+    >>> test()
+      [2, 4, 6, 8]
+      <generator object <genexpr> at 0x7f8fb9b4fcd0>
+     输出一个是列表，一个是迭代器 
+
+
+
+    >>> def test():
+...   lst=[1,2,3,4,5,6,7,8,9]
+...   l1=[x for x in lst if x %2==0]
+...   l2=(x for x in lst if x %2==1)
+...   print l1
+...   print l2.next()
+... 
+>>> 
+   >>> test()
+     [2, 4, 6, 8]
+     1
+
+
+
+
+
+if __name__ == '__nain__' 解释：
+
+python文件的后缀为.py ，.py文件可以用来直接运行，就像一个独立的小程序；也可以用来作为模块被其它程序调用。
+
+__name__是模块的内置属性，如果等于'__main__' 侧表示直接被使用，那么将执行方法test()方法；如果是被调用则不执行 if 判断后面的test()方法。
+ 
+
+     
+        
+      
+     
+
+   
+python的内存管理：
+
+   1.为了探索对象在内存的存储，我们可以求助于Python的内置函数id()。它用于返回对象的身份(identity)。其实，这里所谓的身份，就是该对象的内存地址。
+
+     在Python中，整数和短小的字符，Python都会缓存这些对象，以便重复使用。当我们创建多个等于1的引用时，实际上是让所有这些引用指向同一个对象。
+     为了检验两个引用指向同一个对象，我们可以用is关键字。is用于判断两个引用所指的对象是否相同。
+              >>> a=1
+              >>> b=1
+              >>> print a is b
+                  True
+             >>> a="asdfgh"
+             >>> b="asdfgh"
+             >>> print a is b
+                 True
+             >>> b="asdfgh good"
+             >>> a="asdfgh good"
+             >>> print a is b
+                 False
+             >>> 
+
+     由于Python缓存了整数和短字符串，因此每个对象只存有一份。比如，所有整数1的引用都指向同一对象。即使使用赋值语句，也只是创造了新的引用，而不是对象本身。长的字符串和其它对象可以有多个相同的对象，可以使用赋值语句创建出新的对象。
+
+
+   2.可以使用sys包中的getrefcount()，来查看某个对象的引用计数。需要注意的是，当使用某个引用作为参数，传递给getrefcount()时，参数实际上创建了一个临时的引用。因此，getrefcount()所得到的结果，会比期望的多1
+     >>> from sys import getrefcount
+     >>> a=[1,2,3]
+     >>> print getrefcount(a)
+         2
+
+    
+   3.对象引用对象
+
+      Python的一个容器对象(container)，比如表、词典等，可以包含多个对象。实际上，容器对象中包含的并不是元素对象本身，是指向各个元素对象的引用。
+
+      >>> class from_obj(object):
+...       def __init__(self,to_obj):
+...          self.to_obj=to_obj
+... 
+     >>> b=[1,2,3]
+     >>> a=from_obj(b)
+     >>> print id(a.to_obj)
+         139826877763736
+     >>> print id(b)
+         139826877763736
+     >>> print b is a.to_obj
+         True
+
+
+    
+   
+  4.垃圾回收
+
+         Python也是这样。当Python中的对象越来越多，它们将占据越来越大的内存。不过你不用太担心Python的体形，它会乖巧的在适当的时候“减肥”，启动垃圾回收(garbage collection)，将没用的对象清除。在许多语言中都有垃圾回收机制，比如Java和Ruby
+
+        从基本原理上，当Python的某个对象的引用计数降为0时，说明没有任何引用指向该对象，该对象就成为要被回收的垃圾了。比如某个新建对象，它被分配给某个引用，对象的引用计数变为1。如果引用被删除，对象的引用计数为0，那么该对象就可以被垃圾回收。比如下面的表:
+
+       a = [1, 2, 3]
+       del a
+
+       del a后，已经没有任何引用指向之前建立的[1, 2, 3]这个表。用户不可能通过任何方式接触或者动用这个对象。这个对象如果继续待在内存里，就成了不健康的脂肪。当垃圾回收启动时，Python扫描到这个引用计数为0的对象，就将它所占据的内存清空。
+
+
+
+       然而，减肥是个昂贵而费力的事情。垃圾回收时，Python不能进行其它的任务。频繁的垃圾回收将大大降低Python的工作效率。如果内存中的对象不多，就没有必要总启动垃圾回收。所以，Python只会在特定条件下，自动启动垃圾回收。当Python运行时，会记录其中分配对象(object allocation)和取消分配对象(object deallocation)的次数。当两者的差值高于某个阈值时，垃圾回收才会启动。
+
+      我们可以通过gc模块的get_threshold()方法，查看该阈值:
+
+       import gc
+       print(gc.get_threshold())
+
+       返回(700, 10, 10)，后面的两个10是与分代回收相关的阈值，后面可以看到。700即是垃圾回收启动的阈值。可以通过gc中的set_threshold()方法重新设置。
+
+ 
+
+      我们也可以手动启动垃圾回收，即使用gc.collect()。
+
+
+
+
+     分代回收：
+
+          Python将所有的对象分为0，1，2三代。所有的新建对象都是0代对象。当某一代对象经历过垃圾回收，依然存活，那么它就被归入下一代对象。垃圾回收启动时，一定会扫描所有的0代对象。如果0代经过一定次数垃圾回收，那么就启动对0代和1代的扫描清理。当1代也经历了一定次数的垃圾回收后，那么会启动对0，1，2，即对所有对象进行扫描。
+
+        这两个次数即上面get_threshold()返回的(700, 10, 10)返回的两个10。也就是说，每10次0代垃圾回收，会配合1次1代的垃圾回收；而每10次1代的垃圾回收，才会有1次的2代垃圾回收。
+
+
+
+
+    
+      
+     
+                
+     
+
+
+         
+
+         
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

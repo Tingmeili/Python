@@ -1,0 +1,189 @@
+
+http://man.linuxde.net；；；；各种shell命令的中文讲解网址；并配有详细的示例
+
+find ./ -wholename '*dist/arm/lib/*' -exec cp {} ./arm-resources/arm-lib/ \;   将./下面所有以dist结尾的文件夹下面的/arm/lib/* 复制到 arm-resources/arm-lib里面
+
+find ./ -name targetfile -print0| xargs -0 mv -t targetdir：：查找并移动目标文件到targetdir
+
+ 
+
+整数比较 
+
+等于： if [ “$a” –eq “$b” ] 或者 if(( “$a” == “$b” ))
+
+其他的以此类推
+
+不等于 ： -ne   !=
+
+大于： -gt       >
+
+大于等于:  -ge  >=
+
+小于:      -lt     <
+
+小于等于:    -le     <= 
+
+ 注意：if与[之间，以及[ ]与值之间，以及值与运算符之间均有空格
+
+
+整数加减乘除
+
+a=1 b=2
+
+echo `expr $a + $b`
+
+echo `expr $a - $b`
+
+echo `expr $a \* $b`
+
+echo `expr $b / $a`
+
+注意：除法得到的也是整数
+
+echo `echo "scale=2;$a/$b"|bc`：获得小数的除法
+let：：更快的实现+、-、*、/
+
+
+let a+=20：：a自增20
+
+let b = c*3：：b为c的3倍
+
+字符串比较 
+
+text1=nihao
+
+text2=nihao2
+
+相等：if [ "$text1" = "$text2" ] 或者  if [[ "$text1" == "$text2" ]]
+
+大于：if [ "$text1" > "$text2" ] 或者  if [[ "$text1" > "$text2" ]]
+
+小于：if [ "$text1" < "$text2" ] 或者  if [[ "$text1" < "$text2" ]]
+
+不等：if [ "$text1" != "$text2" ]
+
+空串：-z  如果为空，则true   if [ -z $value ]
+
+在[[]]模式下，字符串比较时可以使用正则（比较简单的），比如：
+
+if [[ $text1 = n* ]]；表示text1是否是n开头的
+
+if [[ $text2 = "n*2" ]]：表示text1是否是n*2
+
+注意：大小的比较时再ASCII字母顺序下
+
+
+同时读取多个文件
+
+exec 3<file1
+
+exec 4<file2 
+
+while read var1 <&3 && read var2 <&4
+
+do
+
+echo $var1 $var2
+
+done
+
+一般情况下，可以允许重定向数10个文件；当读取完行数最少的文件后，循环停止
+
+ 
+
+修改命令行参数的值
+
+set -- $1"/" $2：：：其中$1的值末尾添加了/
+
+
+ 
+
+sed
+
+ 
+
+sed -i  可以直接修改文件；；如果需要在字段中使用参数，则必须使用""将操作包围起来，比如：sed -i "2c sedid=$ID" filepath
+
+ 
+
+sed 's:.*/\(.*\).jar$:\1:'：：：.*贪婪匹配到最后一个/前面；括号就是把里面匹配的内容获取到；最后那个\1就是把匹配到的内容替换当前行
+
+ 
+
+sed 's/\(.*_cut[0-9]\).*/\1/g'；；；2016-11-26_T_14-04-36.138_GMT_cut0_final_piece0_seg2_good_hq_slam.kml 截断成 2016-11-26_T_14-04-36.138_GMT_cut0
+
+ 
+
+一般情况下，sed使用"/"作为分隔符，但是如果使用的值中带有"/"时，sed命令会报错：unknown option to s；；此时只需要将sed中的分隔符改成其他字符就行，比如"|"
+
+ 
+
+在每行的头添加字符，比如"HEAD"，命令如下：
+
+ 
+
+sed 's/^/HEAD&/g' test.file
+
+ 
+
+在每行的行尾添加字符，比如“TAIL”，命令如下：
+
+ 
+
+sed 's/$/&TAIL/g' test.file
+
+ 
+
+ 
+
+awk指定多个分隔符
+
+ 
+
+-F '[A|B]'；；如果需要指定的分隔符为[]，则写法：-F '[][]'
+
+
+删除除.和..之外的所有文件/文件夹：ls -a | awk '/.*/&&$1 != "."&&$1 != ".."' | xargs rm -rf {}
+
+
+ 
+
+cat ~/.ssh/id_rsa.pub | ssh username@IP "cat >> ~/.ssh/authorized_keys"  将自己的key追加到server上
+
+ 
+
+ssh test@10.69.141.4 "sed -i \"s/xx/yy/g\" ~/test.txt"   修改server上的内容
+
+echo `ssh test@$IP1 "cat ~/test.txt"` | ssh test@$IP2 "cat >> ~/test.txt"；；；可以将IP1中的test.txt内容追加到1P2的test.txt中；；；；前提：本机可以免密码登录IP1和IP2
+
+
+echo $a | sed 's/PRE //g' | sed 's/\///g'| tr ' ' '\n' | sort -t. -nk 3 | grep -E "^[0-9][0-9][0-9][0-9].*"；；；；将a值中的PRE 和/删除，然后将空格替换成换行符(为了后续的sort命令）然后再排序，过滤
+
+
+expect命令
+
+可以用来处理交互，实现自动化。需要安装expect : pip install expect，执行的命令和shell不同，而是expect xxx.sh。
+
+示例：（用来本地远程登录22主机，执行文件夹中py脚本对aws主机进行关机开机操作，免输入密码一键执行）
+
+#!/usr/bin/expect -f   
+set timeout 20
+set host "10.69.130.22"
+set username "user"    #设置用户名
+set password "xxx"      #设置密码
+set operation [lindex $argv 0]    #可以读取多个输入参数
+
+spawn ssh $username@$host
+expect "password"     
+send "$password\n"
+expect "*roaddb@*"
+send "cd /home/roaddb/merge_tmp_html_yingtan/aws\r"
+expect "*aws"
+send "python operation_instance_id.py XXXXX $operation\r"
+#interact    如果需要命令操作完成后停留在远端主机，可以加上这个命令
+expect eof
+
+>>> expect xxx.sh start 
+
+
+

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>login</title>
+</head>
+<body>
+	<form method="post">
+    {% csrf_token %}
+    {{uf.as_p}}
+    <input type="submit" value="login">
+    <br>
+    <a href="http://127.0.0.1:8080/regist">regist</a>
+</form>
+
+</body>
+</html>

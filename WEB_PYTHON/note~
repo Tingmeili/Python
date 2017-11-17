@@ -1,0 +1,58 @@
+manage.py --Django项目里面的工具，通过它可以调用Django shell和数据库等
+setting.py   --包含了项目里面的默认的设置，包括数据库的信息，调试标志以及其他的一些工作的变量
+urls.py --负责把URL模式映射到应用程序。
+
+
+
+project和APP的区别已经很明显了，project包含一些全局配置，这些配置构成一个全局的运行平台，各个APP都运行在这个全局的运行平台上，而APP代表的是一个相对独立的功能模块，所以程序的逻辑都在APP中。
+
+
+
+
+ 总结一下：
+
+    进来的请求转入/hello/.
+
+    Django通过在ROOT_URLCONF配置来决定根URLconf.
+
+    Django在URLconf中的所有URL模式中，查找第一个匹配/hello/的条目。
+
+    如果找到匹配，将调用相应的视图函数
+
+    视图函数返回一个HttpResponse
+
+    Django转换HttpResponse为一个适合的HTTP response， 以Web page显示出
+
+
+
+
+所有的Model都继承自django.db.models.Model类，Model类的每一个属性都继承自django.db.models.Field，这个Field有几个作用：
+
+    决定该Field在数据库中的类型
+    决定该Field在前端上如何显示
+    做简单的验证
+
+根据app里面的model：
+-默认会根据APP的名称生成"app名称"+"_"+"类名"
+-会自动增加ID字段
+-Django会根据settings配置中指定的数据库类型来生成相应的SQL语句
+在将app添加到INSTALLD_APPS中后需要执行manage.py migrate,也可通过manage.py makemigrations进行迁移。
+
+
+models学习：
+
+   每个应用一般都会定义一个或多个models，这个数据models实际上是与数据库相关的，models中的每个属性都是数据库当中的一个字段，每个字段是数据库中的一个列。在models中定义的每个类相当于数据库当中的table.如
+
+    class  Musician(models.Model):  
+    　　First_name = models.CharField(max_length = 50 )  
+    　　Last_name = models.CharField(max_length = 50 )  
+    　　Instrument = models.CharField(max_length = 100 )  
+    　　  
+    class Album(models.Model):  
+    　　Artist = models.ForeignKey(Musician)  
+    　　Name = models.CharField(max_length = 100)  
+    　　Release_date = models.DateField()  
+    　　Num_starts = models.IntegerField()  
+
+    如上所示，每个class的属性都是models中的某些字段类的实例，如Name是models.CharField的实例。Models中有许多的字段属性类。并且这些字段属性类均有一些参数，用于修饰这些class内的属性，如Name是CharField的实例，限定其最大字符为100字节.那么，
+
