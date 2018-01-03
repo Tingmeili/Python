@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Show map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+          integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+          crossorigin=""/>
+    <link rel="stylesheet" href="/static/leaflet/leaflet.css"/>
+    <link rel="stylesheet" href="/static/leaflet/leaflet-filelayer-style.css"/>
+    <link rel="stylesheet" href="/static/leaflet/normalize.min.css"/>
+    <link rel="stylesheet" href="">
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+            integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+            crossorigin=""></script>
+    <script src="/static/leaflet/L.CanvasOverlay.js"></script>
+    <script src="/static/leaflet/togeojson.js"></script>
+    <script src="/static/js/jquery/jquery.js"></script>
+    <script src="/static/leaflet/leaflet.filelayer.js"></script>
+    <script type="text/javascript" src="/static/leaflet/Leaflet.GoogleMutant.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js" async defer></script>
+	<link rel="stylesheet" href="/static/leaflet/screen.css" />
+	<link rel="stylesheet" href="/static/leaflet/MarkerCluster.css" />
+	<link rel="stylesheet" href="/static/leaflet/MarkerCluster.Default.css" />
+	<script src="https://cdn.bootcss.com/leaflet.markercluster/1.2.0/leaflet.markercluster-src.js"></script>
+    <style type="text/css">
+        #mapid { height: 800px; }
+    </style>
+</head>
+<body>
+<div id="mapid"></div>
+<br>
+<br>
+<br>
+<button id="save" value="Save Json" style="width:120px">Save Json</button>
+<script type="text/javascript">
+       $(document).ready(function(){
+            var map = L.map('mapid',{
+            renderer: L.canvas()})
+            map.setView([42.49376619,-83.11690379], 17);
+            var layer=L.gridLayer.googleMutant({
+                maxZoom: 21,
+                type:'satellite',
+                enableHighAccuracy: true,
+                }).addTo(map);
+            var modify_node_coord_dict={};
+            var delete_node_coord_dict={};
+            var add_node_coord_list=[];
+            var all_polyline=[];
+            var mark_list=[];
+            var markers = L.markerClusterGroup();
+            function loadMap(div_list,node_list,coord){
+                var polylineOptions = {
+                   color: 'blue',
+                   weight: 2,
+                   opacity: 0.9
+                 };
+                var all_divPointList = [];
+                for(i in div_list){
+                    var divPointList = [];
+                    for(j in div_list[i]){
+                        lat_list=div_list[i][j]["lat"]
+                        lon_list=div_list[i][j]["lon"]
+                        for(n=0;n<lat_list.length;n++){
+                            var div_point = new L.LatLng(lat_list[n],lon_list[n])
+                            divPointList.push(div_point)
+                        }
+                    all_divPointList.push(divPointList)
+                    }
+
+                }
+                var polyline = new L.Polyline(all_divPointList, polylineOptions);
+                map.addLayer(polyline);
+                map.fitBounds(polyline.getBounds());
+                all_polyline.push(polyline)
+
+                //node:
+                //var begin1=new Date();
+
+                for (k in node_list){
+                    for (l in node_list[k]){
+                        node_dict=node_list[k][l];
+                        node_coord=node_list[k][l]["coord"];
+                        //console.log({"lat":node_coord[0],"lng":node_coord[1]});
+                        var m = L.marker({"lat":node_coord[0],"lng":node_coord[1]},{draggable: true,alt:l,title:l});
+                        m.on("dragend",onclick);
+                        m.on("contextmenu",deonClick);
+                        mark_list.push(m);
+                        markers.addLayer(m);
+
+                        }
+                    }
+                map.addLayer(markers);
+                //var end1=new Date();
+                // var time1=(end1.getTime())-(begin1.getTime());
+                //console.log("time1 is="+time1);
+
+
+            };
+            function onclick(e){
+                    //console.log(e);
+                    //console.log(map.getZoom());
+                    modify_node_coord_dict[e.target.options.alt]=[e.target.getLatLng().lat,e.target.getLatLng().lng];
+                    //console.log("***:"+[e.target.getLatLng().lat,e.target.getLatLng().lng]);
+                    requestData(modify_node_coord_dict,delete_node_coord_dict,add_node_coord_list,[e.target.getLatLng().lat,e.target.getLatLng().lng]);
+                    modify_node_coord_dict={};
+                    };
+            function deonClick(e){
+                    //console.log(map.getZoom());
+                    delete_node_coord_dict[e.target.options.alt]=[e.latlng.lat,e.latlng.lng];
+                    //console.log(delete_node_coord_dict);
+                    requestData(modify_node_coord_dict,delete_node_coord_dict,add_node_coord_list,[e.latlng.lat,e.latlng.lng]);
+                    delete_node_coord_dict={};
+                };
+
+
+            var sou_div_list={{ div|safe }};
+            var sou_node_list={{ node|safe }};
+            var coord_default=[];
+            loadMap(sou_div_list,sou_node_list,coord_default);
+
+            function requestData(modify_node_coord_dict,delete_node_coord_dict,add_node_coord_list,coord){
+                all_new_coord={};
+                $.ajax({
+                    url: '/map/',
+                    type: "POST",
+                    data: {"modify":modify_node_coord_dict,"delete":delete_node_coord_dict, "add":add_node_coord_list},
+                    //dataType:"JSON",
+                    success: function (data){
+                        if (mark_list.length!=0){
+                            for(var i=0;i<mark_list.length;i++){
+                                markers.removeLayer(mark_list[i]);
+                            }
+
+                        }
+                        mark_list=[];
+                        if (all_polyline.length!=0){
+                            var myGroup=L.layerGroup(all_polyline);
+                            map.addLayer(myGroup);
+                        }
+                        myGroup.clearLayers();
+                        all_new_coord=jQuery.parseJSON(data).result;
+                        loadMap(all_new_coord["div"],all_new_coord["node"],coord);
+                        //console.log(coord);
+
+                    }
+
+                });
+
+                //console.log(coord);
+                map.setView(coord);
+                map.setZoom(21);
+                //console.log(map.getCenter());
+                //console.log("***:"+map.getZoom())
+
+            };
+
+
+            map.on("dblclick", function(e){
+                var popup = L.popup();
+                add_node_coord_list.push([e.latlng.lat,e.latlng.lng]);
+                // popup.setLatLng(e.latlng).setContent("你点击的位置在 " + e.latlng.toString()).openOn(map);
+                console.log(map.getZoom());
+                requestData(modify_node_coord_dict,delete_node_coord_dict,add_node_coord_list,[e.latlng.lat,e.latlng.lng]);
+                add_node_coord_list=[];
+            });
+
+            $("#save").click(function(){
+                $.ajax({
+                    url: '/map/',
+                    type: "POST",
+                    data: {"save": "save"},
+                    success: function (data){
+                        results =jQuery.parseJSON(data);
+                        if (results.status == 0){
+                            alert("save success")
+                        }
+                        else{
+                            alert("save failed")
+                        }
+                    }
+                });
+
+            });
+
+
+       })
+
+
+</script>
+</body>
+</html>

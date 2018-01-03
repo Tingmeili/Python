@@ -1,0 +1,293 @@
+// Create an array of alphabetical characters used to label the markers.
+        //var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+        // Add some markers to the map.
+        // Note: The code uses the JavaScript Array.prototype.map() method to
+        // create an array of markers based on a given "locations" array.
+        // The map() method here has nothing to do with the Google Maps API.
+        //var markers = locations.map(function(location, i) {
+          //return new google.maps.Marker({
+            //position: location,
+            //label: labels[i % labels.length]
+          //});
+        //});
+
+        // Add a marker clusterer to manage the markers.
+        //var markerCluster = new MarkerClusterer(map, markers,
+            //{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+      //}
+      var locations = [
+        {lat: -31.563910, lng: 147.154312},
+        {lat: -33.718234, lng: 150.363181},
+        {lat: -33.727111, lng: 150.371124},
+        {lat: -33.848588, lng: 151.209834},
+        {lat: -33.851702, lng: 151.216968},
+        {lat: -34.671264, lng: 150.863657},
+        {lat: -35.304724, lng: 148.662905},
+        {lat: -36.817685, lng: 175.699196},
+        {lat: -36.828611, lng: 175.790222},
+        {lat: -37.750000, lng: 145.116667},
+        {lat: -37.759859, lng: 145.128708},
+        {lat: -37.765015, lng: 145.133858},
+        {lat: -37.770104, lng: 145.143299},
+        {lat: -37.773700, lng: 145.145187},
+        {lat: -37.774785, lng: 145.137978},
+        {lat: -37.819616, lng: 144.968119},
+        {lat: -38.330766, lng: 144.695692},
+        {lat: -39.927193, lng: 175.053218},
+        {lat: -41.330162, lng: 174.865694},
+        {lat: -42.734358, lng: 147.439506},
+        {lat: -42.734358, lng: 147.501315},
+        {lat: -42.735258, lng: 147.438000},
+        {lat: -43.999792, lng: 170.463352}
+      ]
+
+
+key=AIzaSyDsDHbzpBilPp_N65s8EqRKyOU2mrY0FyQ
+mapTypeId:google.maps.MapTypeId.SATELLITE
+
+
+// Create a <script> tag and set the USGS URL as the source.
+        var script = document.createElement('script');
+        // This example uses a local copy of the GeoJSON stored at
+        // http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp
+        script.src = 'https://developers.google.com/maps/documentation/javascript/examples/json/earthquake_GeoJSONP.js';
+        document.getElementsByTagName('head')[0].appendChild(script);
+
+// Loop through the results array and place a marker for each
+      // set of coordinates.
+      window.eqfeed_callback = function(results) {
+        for (var i = 0; i < results.features.length; i++) {
+          var coords = results.features[i].geometry.coordinates;
+          var latLng = new google.maps.LatLng(coords[1],coords[0]);
+          var marker = new google.maps.Marker({
+            position: latLng,
+            map: map
+          });
+        }
+
+
+
+
+环境搭建： 
+            
+ 
+  sudo apt-get install openssh-server
+
+1. 先安装：django
+    git clone https://github.com/django/django.git
+    可以切换到你需要的版本的分支
+2. 安装kdtree
+    https://github.com/stefankoegl/kdtree
+
+  安装： python setup.py build
+        python setup.py insatll
+
+
+ ~/Documents/Storm_schema/skeleton-tools
+
+
+python -mjson.tool 
+
+
+
+
+方案一：
+    http://leafletjs.com/
+    mark: http://www.cnblogs.com/shitao/p/3538246.html
+
+    http://www.cnblogs.com/shitao/p/5604652.html
+
+
+    画箭头： https://github.com/bbecquet/Leaflet.PolylineDecorator
+    画点：http://bl.ocks.org/sumbera/11114288
+
+   
+
+
+  leaflet: 详细的知识点： http://blog.csdn.net/itas109/article/details/70054588?locationNum=10&fps=1
+
+               例： Leaflet.LimitZoom  ，
+                    测量工具： leaflet-measure
+                    搜索定位插件： https://github.com/stefanocudini/leaflet-search
+
+    
+
+
+
+  leaflet.markercluster的js下载：   http://www.bootcdn.cn/leaflet.markercluster/
+   
+                    https://github.com/Leaflet/Leaflet.markercluster#examples
+
+
+
+
+
+
+
+
+
+
+
+L.polyline 画线
+
+
+<script type="text/javascript">
+        var map = L.map('mapid').setView([42.49376619,-83.11690379], 13);
+        var click_file_load = false;
+		var whether_load_kml=false;
+        L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
+			attribution: 'google',
+			minZoom:5,
+		}).addTo(map);
+		var style = {
+            opacity: 1.0,
+            fillOpacity: 1.0,
+            weight: 2,
+            clickable: false
+        };
+        var path_coordinate=[]
+        var node_coordinate=[]
+        L.Control.FileLayerLoad.LABEL = '<img class="icon" src="/static/leaflet/folder.svg" alt="file icon"/>';
+        var fileLoad=L.Control.fileLayerLoad({
+            fitBounds: true,
+            fileSizeLimit: 10240,
+            layerOptions: {style: style,
+                           pointToLayer: function (data, latlng) {
+                               //console.log(data)
+                               //console.log(latlng.lat)
+                               //return L.circleMarker(latlng, {style: style});
+                           },
+                           onEachFeature: function(feature, layer) {
+                                //console.log(feature)
+                                if(feature.geometry.type=="Point"){
+                                    node_coordinate.push(feature.geometry.coordinates)
+                                }else{
+                                    path_coordinate.push(feature.geometry.coordinates)
+                                }
+                            }
+                           },
+        }).addTo(map);
+
+        fileLoad.loader.on('data:loaded', function (e) {
+            console.log(path_coordinate);
+
+
+		});
+        var mark=L.marker([42.49376619,-83.11690379],{draggable: true,        // 使图标可拖拽
+            title: 'Text',           // 添加一个标题
+            opacity: 1} )
+            .addTo(map)
+            .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+            .openPopup()
+
+        mark.on('dragend', onMarkClick);
+
+
+        function onMarkClick(e) {
+          console.log(mark.getLatLng())
+          console.log(node_coordinate)
+        }
+
+    </script>
+
+
+
+
+
+
+
+
+console.log(e.target.options.alt);
+            console.log(e.target.getLatLng().lat);
+            console.log(e.target.getLatLng().lng);
+
+
+  //map.on("focus",mapClick());
+            //function mapClick(e){
+                   // console.log("****----***");
+                //}
+
+
+遇到的问题解决办法：
+   1. Django报错403 Forbidden. CSRF token missing or incorrect的解决办法 
+      步骤一：
+            from django.views.decorators.csrf import csrf_protect,csrf_exempt
+            在函数前面加：@csrf_exempt
+            在表单相关的函数前面加：@csrf_protect，然后在html中表单里面加：{% csrf_token %}
+
+   
+
+
+
+
+
+   2,数据交互：https://www.cnblogs.com/psklf/archive/2016/05/30/5542612.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+方案二：
+
+博客：http://blog.csdn.net/wangfei19880117
+apl中文文档：https://developers.google.com/maps/documentation/javascript/kml?hl=zh-cn
+
+
+    获取kml文件的方式：
+       
+
+    Unfortunately you cannot use "localhost". You have two choices:
+
+       1. place the kml on a publically available domain. (if google cannot access it, it won't work)
+        2. Use geoxml3 which basically does what google does but allows you to downlaod and host the parser JS file youself. It will allow you to load a LOCALHOST KML and parse it out for you (objects accessible via JSON) (http://code.google.com/p/geoxml3/).
+
+    Choice #1 might not be an option for those working on defense contracts and deal with sensitive information as the kml is sent to google in the background and rendered on the map.
+
+
+
+
+方案三：openlayers
+   
+       http://openlayers.org/en/latest/examples/kml-earthquakes.html?q=kml
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

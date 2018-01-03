@@ -19,11 +19,9 @@ from article import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', views.home,name='home'),
-    url(r'^add/$', views.add, name='add'),
-    url(r'^new_add/(\d+)/(\d+)/$',views.add2,name='add2'),
-    url(r'^add1/(\d+)/(\d+)/$', views.old_add2_redirect),
-    url(r'^addDate/$', views.addDate)
-
+    url(r'^$', views.home, name='home'),
+    url(r'^map/$', views.showmap, name='map'),
+    #url(r'^jsmap/$', views.showjsmap, name='jsmap'),
+    #url(r'^openlayer/$', views.openlayer, name='openlayer'),
 
 ]

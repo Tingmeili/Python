@@ -1,0 +1,75 @@
+
+学习Robot Framework必须掌握的库—-BuiltIn库
+
+     作为一门表格语言，为了保持简单的结构，RF没有像别的高级语言那样提供类似if else while等内置关键字来实现各种逻辑功能，而是提供给了用户BuiltIn库。如果用户想在测试用例中实现比较复杂的逻辑，那就需要对BuiltIn中的重要关键字有一些了解。另外，BuiltIn库中还封装了很多常见方法和能够控制RF运行状态的关键字，如果想用好RF，一定要对BuiltIn库中的函数有一个比较全面的理解。下面就带着大家认识一下BuiltIn库中比较重要的关键字。
+Evaluate 关键字：
+如果你需要进行一些数值运算并得到结果，你就需要用到Evaluate关键字。Evaluate会把你想要计算的表达式直接传递给Python，并把Python的计算结果返回给你。这是最经常要用到的。
+ 
+Should 系列关键字：
+Should系列关键字是Should打头的一系列关键字。
+Should Be Empty
+Should Be Equal
+Should Be Equal As Integers 
+Should Be Equal As Numbers
+Should Be Equal As Strings
+Should Be True
+Should Contain
+Should Contain X Times
+Should End With
+Should Match
+Should Match Regexp 
+Should Not Be Empty
+Should Not Be Equal
+Should Not Be Equal As Integers
+Should Not Be Equal As Numbers
+Should Not Be Equal As Strings
+Should Not Be True
+Should Not Contain
+Should Not End With
+Should Not Match 
+Should Not Match Regexp
+Should Not Start With
+Should Start With
+这些关键字都是用作判断时用的，每个用例都会用到，比如我们的执行结果得到了一个字符串，我们要判断这个字符串要与一个预期字符串相等，否则用例就无法通过，这时候，肯定会用上Should Be Equal As String
+关键字，其它关键字我们通过关键字的名字就能顾名思义，知道它的作用。
+ 
+点击F5可查看某个函数的具体用法。
+如Should Contain有两个入参，下方还有具体的说明。
+Should Contain item1 item2  ：item2要在item1里，比如说item1为hello  item2为he  则通过。
+ 
+Convert To系列关键字：
+Convert To Binary
+Convert To Boolean
+Convert To Hex 
+Convert To Integer 
+Convert To Number 
+Convert To Octal 
+Convert To String
+做类型转换，将某个值转换为相对应的类型。
+ 
+Run keyword系列关键字：
+Run Keyword If
+Run Keyword If All Critical Tests Passed
+Run Keyword If All Tests Passed
+Run Keyword If Any Critical Tests Failed
+Run Keyword If Any Tests Failed
+Run Keyword If Test Failed
+Run Keyword If Test Passed
+Run、Keyword If Timeout Occurred
+这些关键字能根据一个判断条件的真假来看是否执行关键字。一般使用这些关键字来实现高级语言中的ifelse功能。最常用的是Run Keyword If 和 Run Keyword unless 他们俩实现的效果正好相反。
+ 
+Exit For Loop关键字：
+用作退出循环，一般和Run Keyword If关键字联合使用，来实现条件退出。
+ 
+Wait Until Keyword Succeeds关键字：
+这是一个将异步调用变为同步调用的关键字。举一个例子：如果call某个WebService，并且需要得到返回结果才能做下一部操作。我们就会用到这个关键字。
+ 
+BuiltIn库里还有很多宝贝
+比如日期相关的关键字GetTime。
+让测试暂停的Sleep等。都相当有用。
+RF目前仅有2个内置关键字：FOF 和 IN，来实现循环结构。功能还是比较弱的。
+ 
+了解关键字的用法，直接点击F5，在Search term中，输入关键字，按回车键，可以在下方对这个关键字的入参用法进行说明，还在等什么，赶紧用起来，加油哦。
+
+ 
+

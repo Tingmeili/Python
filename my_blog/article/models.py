@@ -19,10 +19,10 @@ class Article(models.Model):
         ordering = ['-date_time']
 
 
-class Userinf(models.Model):
+class IfUser(models.Model):
     username = models.CharField(max_length=30)
     password = models.CharField(max_length=20)
     email = models.EmailField()
 
     def __str__(self):
-        return u'%s %s' % (self.username, self.password, self.email)
+        return u'%s %s %s' % (self.username, self.password, self.email)

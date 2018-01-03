@@ -6,48 +6,141 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from article import models
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect,csrf_exempt
+from django import forms
+import json
+from modifydata.DeteleCoord import *
+import time
+import datetime
+
+
+reload(sys)
+sys.setdefaultencoding('utf8')
+
+JSON_DIR = ""
+JSON_FILE = ""
 
 
 # Create your views here.
 
 # 第一个参数必须是 request，与网页发来的请求有关，request 变量里面包含get或post的内容，用户浏览器，系统等信息在里面
+
+@csrf_exempt
 def home(request):
-    string = 'a,b,cd'
-    tutorialList = ["HTML", "CSS", "jQuery", "Python", "Django"]
-    info_dict = {'site': u'自强学堂', 'content': u'各种IT技术教程'}
-    List = map(str, range(100))
-    return render(request, 'home.html', {'TutorialList': tutorialList,
-                                         'List': List})  # render 是渲染模板,使用render的时候，Django 会自动找到 INSTALLED_APPS 中列出的各个 app 下的 templates 中的文件
+    global JSON_FILE
+    if request.method == "POST":
+        #print "request.POST:",request.POST["jsondir"]
+        # JSON_DIR = str(request.POST["jsondir"])
+        JSON_FILE = str(request.POST["jsondir"])
 
+    return render(request,
+                      'home.html')
 
-def add(request):
-    a = request.GET.get('a', 0)
-    b = request.GET.get('b', 0)
-    # 当请求地址的时候没有加a和b的值的时候，这样写的话a和b的值就是默认为0
-    c = int(a) + int(b)
-    return HttpResponse(str(c))
+@csrf_exempt
+def showmap(request):
+    global map_div
+    global map_node
+    all_div_coord_list = []
+    all_node_coord_list = []
+    global JSON_DIR
+    global JSON_FILE
+    if not JSON_DIR or JSON_DIR != JSON_FILE:
+        JSON_DIR = JSON_FILE
+        fb = open(JSON_DIR, 'r')
+        js = json.load(fb)
+        map_div = js["map_div_"]
+        map_node = js["map_node_"]
+    if request.method == "POST":
+        status = 0
+        result=''
+        modify_node_dict={}
+        delete_node_dict=[]
+        add_node_list = []
+        tmp_add_node_dict = {}
+        new_node_list = request.POST
+        if new_node_list.keys():
+            if new_node_list.keys()[0].startswith("save"):
+                iden = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+                status = utils.save_json(JSON_FILE, map_div, map_node, iden)
+                status = utils.save_json_to_kml(JSON_FILE, map_div, map_node, iden)
+                return HttpResponse(json.dumps({
+                    "status": status,
+                    }))
+        for key in new_node_list.keys():
+            if key.split('[]')[0].split('[')[0] == "modify":
+                modify_node_dict[key.split('[]')[0].split('[')[1].split(']')[0]] = new_node_list.getlist(key)
+            elif key.split('[]')[0].split('[')[0] == "delete":
+                delete_node_dict.append(key.split('[]')[0].split('[')[1].split(']')[0])
+            elif key.startswith("add"):
+                index = key[key.index("[") + 1: key.index("]")].strip()
+                tmp_add_node_dict[index] = new_node_list.getlist(key)
+        if tmp_add_node_dict:
+            tmp_keys = sorted(tmp_add_node_dict.keys())
+            for key in tmp_keys:
+                add_node_list.append(tmp_add_node_dict[key])
+        Mcoord = DeteleCoord(map_div,map_node,modify_node_dict,delete_node_dict, add_node_list)
+        new_map_div,new_map_node=Mcoord.modify_coord()
+        map_div=new_map_div
+        map_node=new_map_node
+        if len(new_map_div)!=0 and len(new_map_node)!=0:
+            for i in range(0, len(new_map_div)):
+                if len(new_map_div[i])!=0:
+                    coord_dict = {}
+                    division_id = new_map_div[i]["id_div_"]
+                    coord_dict["lon"] = new_map_div[i]["list_lon_"]
+                    coord_dict["lat"] = new_map_div[i]["list_lat_"]
+                    all_div_coord_list.append({division_id: coord_dict})
+            for j in range(0, len(new_map_node)):
+                if len(new_map_node[j]) != 0:
+                    coor_node_dict = {}
+                    lat = new_map_node[j]["lat_"]
+                    lon = new_map_node[j]["lon_"]
+                    node_id = new_map_node[j]["id_node_"]
+                    list_id_div = new_map_node[j]["list_id_div_"]
+                    type_node = new_map_node[j]["type_node_"]
+                    coor_node_dict["coord"] = [lat, lon]
+                    coor_node_dict["div_id"] = list_id_div
+                    coor_node_dict["type_node"] = [type_node]
+                    all_node_coord_list.append({node_id: coor_node_dict})
+            return HttpResponse(json.dumps({
+                "status": status,
+                "result": {"div": all_div_coord_list, "node": all_node_coord_list}
+            }))
+    else:
+        #start = datetime.datetime.now()
+        for i in range(0, len(map_div)):
+            coord_dict = {}
+            division_id = map_div[i]["id_div_"]
+            coord_dict["lon"] = map_div[i]["list_lon_"]
+            coord_dict["lat"] = map_div[i]["list_lat_"]
+            all_div_coord_list.append({division_id: coord_dict})
+        for j in range(0, len(map_node)):
+            coor_node_dict = {}
+            lat = map_node[j]["lat_"]
+            lon = map_node[j]["lon_"]
+            node_id = map_node[j]["id_node_"]
+            list_id_div = map_node[j]["list_id_div_"]
+            type_node = map_node[j]["type_node_"]
+            coor_node_dict["coord"] = [lat, lon]
+            coor_node_dict["div_id"] = list_id_div
+            coor_node_dict["type_node"] = [type_node]
+            all_node_coord_list.append({node_id: coor_node_dict})
+        #end = datetime.datetime.now()
+        ##print str(end-start)
+        return render(request, 'map.html', {"div": json.dumps(all_div_coord_list), "node": json.dumps(all_node_coord_list)})
 
-
-def add2(request, a, b):
-    c = int(a) + int(b)
-    return HttpResponse(str(c))
-
-
-def old_add2_redirect(request, a, b):
-    return HttpResponseRedirect(
-        reverse('add2', args=(a, b))
-    )
-
-
-# 注册账户
-@csrf_protect
-def addDate(request):
-    if request.method == 'POST':
-        u_name = request.POST['username']
-        u_passw = request.POST['password']
-        u_email = request.POST['email']
-        models.Userinf.objects.create(username=u_name, password=u_passw, email=u_email)
-    return HttpResponse("register success")
-
-# 更改密码
+def save_json_file():
+    global JSON_FILE
+    now_time = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+    save_path =  os.path.join(os.path.dirname(JSON_FILE), now_time + ".json")
+    json_data = {}
+    json_data["map_div_"] = map_div
+    json_data["map_node_"] = map_node
+    try:
+        with open(save_path, 'w') as jsons:
+            jsons.write(json.dumps(json_data, indent = 4))
+        result = 0
+    except e:
+        result = 1
+    return result
+    

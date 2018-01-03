@@ -197,17 +197,15 @@ Django Shell:
 
 6.apache部署： 
 
-总结:
+        总结:
 
-部署时文件对应关系:
+        部署时文件对应关系:
 
-sitename.conf --> wsgi.py --> settings.py --> urls.py --> views.py
+        sitename.conf --> wsgi.py --> settings.py --> urls.py --> views.py
 
-扩展
+        扩展
 
-明白了上面的关系, 一个 Django project 使用多个域名或让app使用子域名很简单,只要新建一个 wsgi.py 文件,更改里面对应的settings文件,新的settings文件可以对应新的urls.py,从而做到访问与原来不同的地址!
-
-
+        明白了上面的关系, 一个 Django project 使用多个域名或让app使用子域名很简单,只要新建一个 wsgi.py 文件,更改里面对应的settings文件,新的settings文件可以对应新的urls.py,从而做到访问与原来不同的地址!
 
 
 
@@ -216,6 +214,29 @@ sitename.conf --> wsgi.py --> settings.py --> urls.py --> views.py
 
 
 
+
+7.更新数据库出现错误：
+    执行python manage.py migrate报错：
+         django.db.utils.OperationalError: (1017, "Can't find file: './mysql/article_userinf.frm' (errno: 2)")
+
+
+    解决办法： 
+         首先要保证,目前的migration文件和数据库是同步的，通过执行：
+                  python manage.py makemigrations
+                  如果看到 这样的提示: No changes detected，则可以继续接下来的步骤
+
+         进入到相应的app的migrations文件夹下面：
+               删除除了__init__.py的其他的文件
+         然后执行python manage.py makemigrations
+         再执行 python manage.py migrate：
+            （如果报：django.db.utils.OperationalError: (1050, "Table 'article_article' already exists"  ，则执行：python manage.py migrate appname --fake )
+             
+         
+
+             
+
+
+ 
 
 
 
