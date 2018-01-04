@@ -69,8 +69,8 @@ world!"
 
 
 
-Python中的普通字符串在内部是以8位ASCII码形成存储的
- 而Unicode字符串则存储为16位Unicode字符，这样就能够表示更多的字符集了，包括世界上大多数语言的特殊字符。
+  Python中的普通字符串在内部是以8位ASCII码形成存储的
+  而Unicode字符串则存储为16位Unicode字符，这样就能够表示更多的字符集了，包括世界上大多数语言的特殊字符。
   >>> u'hello, world!'
       u'hello, world!' 
 
