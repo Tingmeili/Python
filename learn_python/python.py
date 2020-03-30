@@ -149,7 +149,7 @@ python代码规范：https://confluence.ygomi.com:8443/display/RRT/Code+specific
 
     或者
 
-    form somemodule immport  somefunction
+    from somemodule import  somefunction
 
     或者
 
